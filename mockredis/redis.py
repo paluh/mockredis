@@ -238,6 +238,11 @@ class MockRedis(object):
                 # Redis returns nil if popping from an empty list
                 pass
 
+    def llen(self, key):
+        if key in self.redis:
+            return len(self.redis[key])
+        return 0
+
     def rpush(self, key, *args):
         """Emulate rpush."""
 

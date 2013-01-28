@@ -107,3 +107,10 @@ class TestRedis(TestCase):
             self.redis.rpush(key, v)
             self.assertEquals(self.redis.lpop(key),
                               str(v))
+
+    def test_llen(self):
+        key = 'key'
+        self.assertEqual(self.redis.llen(key), 0)
+        self.assertFalse(self.redis.exists(key))
+        self.redis.rpush(key, 'value')
+        self.assertEqual(self.redis.llen(key), 1)
