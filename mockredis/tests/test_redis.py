@@ -109,8 +109,21 @@ class TestRedis(TestCase):
                               str(v))
 
     def test_llen(self):
-        key = 'key'
-        self.assertEqual(self.redis.llen(key), 0)
-        self.assertFalse(self.redis.exists(key))
-        self.redis.rpush(key, 'value')
-        self.assertEqual(self.redis.llen(key), 1)
+        self.assertEqual(self.redis.llen('key'), 0)
+        self.assertFalse(self.redis.exists('key'))
+        self.redis.rpush('key', 'value')
+        self.assertEqual(self.redis.llen('key'), 1)
+
+    def test_lrange(self):
+        self.assertEqual(self.redis.lrange('key', 0, 100), [])
+        self.assertFalse(self.redis.exists('key'))
+        for i in range(3):
+            self.redis.rpush('key', i)
+        self.assertEqual(self.redis.lrange('key', 2, 0), [])
+        self.assertEqual(self.redis.lrange('key', 0, 100), ['0', '1', '2'])
+        self.assertEqual(self.redis.lrange('key', 0, 2), ['0', '1', '2'])
+        self.assertEqual(self.redis.lrange('key', 1, 1), ['1'])
+        self.assertEqual(self.redis.lrange('key', 1, -1), ['1', '2'])
+        self.assertEqual(self.redis.lrange('key', 1, -2), ['1'])
+        self.assertEqual(self.redis.lrange('key', -3, -2), ['0', '1'])
+        self.assertEqual(self.redis.lrange('key', -1, -1), ['2'])

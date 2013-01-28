@@ -209,13 +209,11 @@ class MockRedis(object):
     def lrange(self, key, start, stop):
         """Emulate lrange."""
 
-        # Does the set at this key already exist?
-        if key in self.redis:
-            # Yes, add this to the list
-            return map(str, self.redis[key][start:stop + 1 if stop != -1 else None])
-        else:
-            # No, override the defaultdict's default and create the list
-            self.redis[key] = list([])
+        if key not in self.redis:
+            return []
+        # convert start and stop to positive indexes
+        start, stop = (len(self.redis[key])+s if s < 0 else s for s in [start, stop])
+        return map(str, self.redis[key][start:stop+1])
 
     def lindex(self, key, index):
         """Emulate lindex."""
